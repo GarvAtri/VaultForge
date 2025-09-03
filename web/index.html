@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>VaultForge Secure Vault</title>
+<style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  max-width: 900px;
+  margin: auto;
+  padding: 30px;
+  background: #000000; /* black background */
+  color: #CFB991; /* gold text */
+}
+
+header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+h1 {
+  font-size: 4em;
+  font-weight: bold;
+  color: #CFB991;
+  margin: 0;
+  text-shadow: 2px 2px #222;
+  letter-spacing: 2px;
+}
+
+h2 {
+  font-size: 1.4em;
+  font-weight: normal;
+  color: #CFB991;
+  margin: 15px 0 5px 0;
+}
+
+#fileInput {
+  display: none; /* hide the default file input */
+}
+
+#selectBtn, #uploadBtn {
+  padding: 14px 28px;
+  margin: 5px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+}
+
+#selectBtn {
+  background: #222; /* dark themed */
+  color: #CFB991; /* gold text */
+  border: 2px solid #CFB991;
+}
+
+#selectBtn:hover {
+  background: #111;
+}
+
+#uploadBtn {
+  background: #CFB991;
+  color: #000;
+}
+
+#uploadBtn:hover {
+  background: #BFA16C;
+}
+
+#selectedFile {
+  margin-left: 10px;
+  color: #CFB991;
+  font-weight: bold;
+  vertical-align: middle;
+}
+
+#progressBar {
+  width: 100%;
+  display: none;
+  height: 18px;
+  border-radius: 10px;
+  margin: 20px 0;
+  background: #222;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #111;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.7);
+  color: #CFB991;
+  margin-top: 20px;
+}
+
+th, td {
+  border: 1px solid #333;
+  padding: 12px;
+  text-align: left;
+}
+
+th {
+  background: #000;
+  color: #CFB991;
+  font-size: 1em;
+  letter-spacing: 1px;
+}
+
+/* Footer asterisk pinned to bottom, almost invisible */
+footer {
+  position: fixed;
+  bottom: 5px;
+  width: 100%;
+  text-align: center;
+  z-index: 1000;
+}
+
+footer small {
+  font-size: 0.35em;
+  color: #5A513C;
+  opacity: 0.2; /* almost invisible */
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>VaultForge</h1>
+  <h2>The world’s most secure file storage system</h2>
+</header>
+
+<div style="text-align:center; margin: 20px 0;">
+  <input type="file" id="fileInput">
+  <button id="selectBtn">Choose File</button>
+  <button id="uploadBtn">Upload</button>
+  <span id="selectedFile">No file selected</span>
+</div>
+
+<progress id="progressBar" value="0" max="100"></progress>
+<p id="status"></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Filename</th>
+      <th>Uploaded At</th>
+      <th>Signature</th>
+    </tr>
+  </thead>
+  <tbody id="fileTable"></tbody>
+</table>
+
+<footer>
+  <small>
+    *Security features in progress to prevent misuse and ensure compliance
+  </small>
+</footer>
+
+<script type="module">
+import * as nacl from "https://cdn.jsdelivr.net/npm/tweetnacl-es6@1.0.3/nacl-fast-es.js";
+
+let publicKey = null;
+const fileInput = document.getElementById("fileInput");
+const selectBtn = document.getElementById("selectBtn");
+const uploadBtn = document.getElementById("uploadBtn");
+const selectedFile = document.getElementById("selectedFile");
+const progressBar = document.getElementById("progressBar");
+const status = document.getElementById("status");
+const fileTable = document.getElementById("fileTable");
+
+async function ensureKey() {
+  if (!publicKey) {
+    const resp = await fetch("/gen-key");
+    const result = await resp.json();
+    publicKey = result.publicKey;
+  }
+}
+
+// File select button
+selectBtn.onclick = () => fileInput.click();
+fileInput.onchange = () => {
+  selectedFile.textContent = fileInput.files[0] ? fileInput.files[0].name : "No file selected";
+};
+
+async function uploadFile(file) {
+  if (!file) return alert("Select a file first");
+  await ensureKey();
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/upload");
+
+  xhr.upload.onprogress = e => {
+    if (e.lengthComputable) {
+      progressBar.style.display = "block";
+      progressBar.value = (e.loaded / e.total) * 100;
+    }
+  };
+
+  xhr.onload = () => {
+    progressBar.style.display = "none";
+    if (xhr.status !== 200) {
+      status.innerText = "Upload failed: " + xhr.status;
+      return;
+    }
+    const result = JSON.parse(xhr.responseText);
+    status.innerText = `File uploaded: ${result.manifest.filename}`;
+    addFileToTable(result);
+  };
+
+  xhr.send(formData);
+}
+
+function addFileToTable(result) {
+  const tr = document.createElement("tr");
+  const { manifest, signature } = result;
+
+  tr.innerHTML = `
+    <td>${manifest.filename}</td>
+    <td>${manifest.uploadedAt}</td>
+    <td>${signature.slice(0, 20)}...</td>
+  `;
+  fileTable.appendChild(tr);
+}
+
+uploadBtn.onclick = () => {
+  const file = fileInput.files[0];
+  if (!file) return alert("Select a file first");
+  uploadFile(file);
+};
+</script>
+</body>
+</html>

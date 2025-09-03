@@ -1,0 +1,16 @@
+# Node dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# Uploaded files (optional, don't commit your actual uploads)
+uploads/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code settings
+.vscode/
