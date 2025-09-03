@@ -1,7 +1,5 @@
 # VaultForge – Secure File Storage System
 
-![VaultForge Banner](https://via.placeholder.com/800x150?text=VaultForge+Secure+Vault) 
-
 **VaultForge** is a modern, web-based file storage platform designed to provide **highly secure file management**, aiming to become the world’s most secure system. It demonstrates industry-standard security practices, cryptographic integrity checks, audit logging, and a polished web interface.  
 
 ---
