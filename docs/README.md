@@ -1,14 +1,40 @@
-# VaultForge - Secure Quantum-Resistant Vault
+# VaultForge – Secure File Storage System
 
-## Project Overview
-- **Backend**: Node.js + Express + Multer 2.x
-- **Frontend**: Simple HTML + JS for file upload and manifest verification
-- **Security Features**:
-  - Manifest signing with Ed25519
-  - Audit & append-only logging
-  - Base64 encoding via Node.js Buffer
-- **Folders**:
-  - api/: backend server
-  - web/: client UI
-  - uploads/: stored encrypted files
-  - logs/: audit logs
+![VaultForge Banner](https://via.placeholder.com/800x150?text=VaultForge+Secure+Vault) 
+
+**VaultForge** is a modern, web-based file storage platform designed to provide **highly secure file management**, aiming to become the world’s most secure system. It demonstrates industry-standard security practices, cryptographic integrity checks, audit logging, and a polished web interface.  
+
+---
+
+## Key Features
+
+- **File Upload with Manifest Signing**  
+  Each uploaded file is accompanied by a signed manifest using cryptographic signatures to ensure metadata integrity.  
+
+- **Audit Logging**  
+  Server activities, such as key generation and file uploads, are logged using `winston` for traceability and accountability.  
+
+- **Extensible Architecture**  
+  Designed to support advanced security features in the future:  
+  - End-to-end encryption  
+  - File integrity verification  
+  - Quantum-resistant signature options  
+
+- **Modern Web Interface**  
+  Clean, intuitive UI with responsive design, progress feedback, and clear upload status.
+
+---
+
+## Technology Stack
+
+- **Backend:** Node.js, Express, Multer, TweetNaCl, Winston  
+- **Frontend:** HTML, CSS, JavaScript (ES Modules)  
+
+---
+
+## Installation & Usage
+
+1. **Clone the repository**
+```bash
+git clone https://github.com/<your-username>/VaultForge.git
+cd VaultForge
