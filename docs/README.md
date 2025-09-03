@@ -23,10 +23,29 @@
 
 ---
 
-## Technology Stack
+## Tech Stack & Security Highlights
 
-- **Backend:** Node.js, Express, Multer, TweetNaCl, Winston  
-- **Frontend:** HTML, CSS, JavaScript (ES Modules)  
+**Backend & Frontend:**
+- Node.js, Express.js
+- Modern JavaScript, HTML5, CSS3
+- Future cloud integration: AWS S3 with object-lock for immutable storage
+
+**Cryptography & Security:**
+- Digital Signatures: Ed25519 (via TweetNaCl) for cryptographically signed manifests
+- Hashing: SHA-256 for file and manifest integrity verification
+- Quantum-Resistant Signatures: NaCl-based, future-proof against post-quantum attacks
+- Encryption:
+  - HTTPS/TLS 1.3 for data in transit
+  - End-to-end encryption for future-proofing
+- Access Control: Role-Based Access Control (RBAC) for user isolation
+- Audit & Logging: Winston-based logs for uploads/downloads with timestamps
+- Integrity Verification: Detached signature manifests for tamper-proof validation
+
+**Additional Security Practices:**
+- Isolated per-user storage paths
+- Secure key generation and management
+- Planned AWS S3 object-lock to prevent overwrites/deletion
+- Forward-looking architecture designed for enterprise-grade compliance
 
 ---
 
